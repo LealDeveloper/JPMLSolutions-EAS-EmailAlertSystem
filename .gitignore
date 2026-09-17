@@ -2,10 +2,13 @@
 bin/
 obj/
 out/
-*.zip
 *.bak
 *.cache
 node_modules/
 .vscode/
 .DS_Store
 Thumbs.db
+
+# Keep the exported solution package visible in the portfolio repo
+!Solution/*.zip
+!Solution/**/*.zip
