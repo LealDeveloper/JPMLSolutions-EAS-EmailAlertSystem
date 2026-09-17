@@ -154,6 +154,7 @@ JPMLSolutions-EAS-EmailAlertSystem/
 │   └── PowerAutomate/
 │       └── PowerAutomate_Overview.md
 ├── Solution/
+│   ├── EAS_Entities.zip
 │   └── README.md
 ├── Screenshots/
 │   └── .gitkeep
