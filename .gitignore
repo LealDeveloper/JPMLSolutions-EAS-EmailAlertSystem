@@ -1,0 +1,11 @@
+# Power Platform / local build artifacts
+bin/
+obj/
+out/
+*.zip
+*.bak
+*.cache
+node_modules/
+.vscode/
+.DS_Store
+Thumbs.db
