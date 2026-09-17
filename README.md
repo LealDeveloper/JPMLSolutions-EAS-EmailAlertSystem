@@ -1,24 +1,30 @@
-# 📧 Email Alert System — JPMLSolutions Portfolio
+# 📧 Email Alert System (EAS)
 
-A Microsoft Power Platform solution designed to monitor mailbox activity, capture incoming email events, classify them, and store structured alert data in Dataverse for operational monitoring and automation.
+<div align="center">
 
-This project complements the Task Manager portfolio by showing how Power Platform can handle event-driven processing, Microsoft Graph integration, and rule-based business logic.
+![GitHub repo](https://img.shields.io/badge/Power%20Platform-Dataverse%20%2B%20Power%20Automate-0078D4?style=for-the-badge)
+![GitHub repo](https://img.shields.io/badge/Project-Email%20Alert%20System-6A5ACD?style=for-the-badge)
+![GitHub repo](https://img.shields.io/badge/Status-Portfolio%20Ready-2ECC71?style=for-the-badge)
+
+</div>
+
+A Microsoft Power Platform solution designed to monitor mailbox activity, ingest email events, classify them, and store structured alert data in Dataverse for operational automation and traceability.
+
+This project complements the Task Manager portfolio by demonstrating a more event-driven and integration-heavy scenario using Microsoft Graph, Power Automate, Dataverse, and Azure security services.
 
 ---
 
-## 🎯 Project Purpose
+## 🎯 Business Value
 
-The Email Alert System (EAS) is built for environments where email is not just communication, but a source of operational signals.
+The EAS is built for operational scenarios where email is a business signal rather than just communication.
 
-It supports scenarios such as:
+Examples include:
 
 - alerting on incoming operational emails
-- parsing email events into structured business data
+- parsing customer or support emails into structured records
 - monitoring mailbox activity continuously
-- creating auditable logs for each processing step
-- routing alerts to downstream workflows or business teams
-
-This is a strong example of a low-code, enterprise-ready solution using Dataverse, Power Automate, Graph, and Azure identity/security patterns.
+- logging each processing event for auditability
+- routing business alerts into downstream automation
 
 ---
 
@@ -26,44 +32,44 @@ This is a strong example of a low-code, enterprise-ready solution using Datavers
 
 ```text
 ┌──────────────────────────────────────────────────────────────┐
-│                Microsoft 365 / Exchange / Graph              │
-│  Monitored Mailboxes │ Webhooks │ Email Notifications         │
-└──────────────────────────────┬───────────────────────────────┘
-                               │
-                   ┌───────────▼────────────┐
-                   │     Power Automate      │
-                   │ • SubscriptionCreate    │
-                   │ • EmailIngestion        │
-                   │ • GetGraphAccessToken   │
-                   │ • RuleBasedParse        │
-                   │ • SubscriptionRenew     │
-                   │ • SubscriptionDelete    │
-                   └───────────┬────────────┘
-                               │
-                   ┌───────────▼────────────┐
-                   │      Microsoft Dataverse │
-                   │ crb7a_tbl_MonitoredMailbox│
-                   │ crb7a_tbl_AlertRule      │
-                   │ crb7a_tbl_EmailRecord     │
-                   │ crb7a_tbl_ExtractedData   │
-                   │ crb7a_tbl_ProcessingLog   │
-                   │ crb7a_dic_AlertChannel    │
-                   │ crb7a_dic_EmailCategory   │
-                   └───────────┬────────────┘
-                               │
-                   ┌───────────▼────────────┐
-                   │        Azure Layer      │
-                   │ • App Registration      │
-                   │ • Key Vault             │
-                   │ • Secret Management     │
-                   └────────────────────────┘
+│             Microsoft 365 / Exchange / Microsoft Graph      │
+│  Monitored Mailboxes │ Webhooks │ Email Events               │
+└───────────────────────────────┬──────────────────────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │    Power Automate       │
+                    │ • GetGraphAccessToken   │
+                    │ • SubscriptionCreate    │
+                    │ • SubscriptionRenew     │
+                    │ • SubscriptionDelete    │
+                    │ • EmailIngestion        │
+                    │ • RuleBasedParse        │
+                    └───────────┬────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │    Microsoft Dataverse  │
+                    │ crb7a_tbl_MonitoredMailbox │
+                    │ crb7a_tbl_AlertRule        │
+                    │ crb7a_tbl_EmailRecord      │
+                    │ crb7a_tbl_ExtractedData    │
+                    │ crb7a_tbl_ProcessingLog    │
+                    │ crb7a_dic_AlertChannel     │
+                    │ crb7a_dic_EmailCategory    │
+                    └───────────┬────────────┘
+                                │
+                    ┌───────────▼────────────┐
+                    │      Azure Layer        │
+                    │ • App Registration      │
+                    │ • Key Vault             │
+                    │ • Secret Management     │
+                    └────────────────────────┘
 ```
 
 ---
 
 ## ⚙️ Solution Information
 
-This repository reflects the Dataverse solution:
+The repository reflects the following Dataverse solution:
 
 - Unique Name: `PortfolioEmailAlertSystem`
 - Friendly Name: `Portfolio - EAS - Email Alert System`
@@ -71,78 +77,64 @@ This repository reflects the Dataverse solution:
 - Version: `1.0.0.1`
 - Managed: `No`
 
-The solution is built around a processing model where email events are received, validated, parsed, and recorded for traceability and downstream automation.
+The design is centered on a processing lifecycle where email events are received, validated, parsed, classified, and logged for operational traceability.
 
 ---
 
-## 🗄️ Dataverse Model
+## 📊 Core Components
 
-### Main entities
+### Dataverse model
 
-| Table | Purpose |
+| Entity | Purpose |
 |---|---|
-| `crb7a_tbl_MonitoredMailbox` | Tracks the mailboxes being monitored |
-| `crb7a_tbl_AlertRule` | Business logic for alert triggers and conditions |
-| `crb7a_tbl_EmailRecord` | Stores the original email payload and metadata |
-| `crb7a_tbl_ExtractedData` | Structured values extracted from messages |
-| `crb7a_tbl_ProcessingLog` | Execution history, diagnostics, and audit trail |
+| `crb7a_tbl_MonitoredMailbox` | Tracks the mailboxes monitored by the solution |
+| `crb7a_tbl_AlertRule` | Stores business rules used to detect email-based alerts |
+| `crb7a_tbl_EmailRecord` | Stores raw email data and metadata |
+| `crb7a_tbl_ExtractedData` | Holds structured values extracted from the email content |
+| `crb7a_tbl_ProcessingLog` | Auditable log of operations, errors, and process steps |
 
-### Reference dictionaries
-
-| Table | Purpose |
+| Dictionary | Purpose |
 |---|---|
-| `crb7a_dic_AlertChannel` | Defines alert delivery mechanisms |
-| `crb7a_dic_EmailCategory` | Defines email categories for classification |
+| `crb7a_dic_AlertChannel` | Defines how alerts are propagated |
+| `crb7a_dic_EmailCategory` | Classifies incoming messages by type or scenario |
 
----
-
-## ⚡ Power Automate Flows
-
-The solution includes the following cloud flows:
+### Power Automate flows
 
 | Flow | Purpose |
 |---|---|
-| `Flow_GetGraphAccessToken` | Authenticates with Microsoft Graph and refreshes tokens |
-| `Flow_SubscriptionCreate` | Creates webhook subscription for monitored mailboxes |
-| `Flow_SubscriptionRenew` | Extends webhook validity before expiry |
-| `Flow_SubscriptionDelete` | Removes stale subscriptions |
-| `Flow_EmailIngestion` | Receives incoming webhook events |
-| `Flow_RuleBasedParse` | Parses message content and classifies alert conditions |
-
-These flows are designed with operational resilience in mind:
-
-- secure authentication through Azure and Key Vault
-- validation before processing
-- event-driven processing model
-- audit logging in Dataverse
-- clean separation between ingestion, parsing, and alerting logic
+| `Flow_GetGraphAccessToken` | Authenticates to Microsoft Graph using secure credentials |
+| `Flow_SubscriptionCreate` | Creates webhook subscriptions for mailbox monitoring |
+| `Flow_SubscriptionRenew` | Refreshes subscriptions before expiry |
+| `Flow_SubscriptionDelete` | Removes stale or disabled subscriptions |
+| `Flow_EmailIngestion` | Receives mailbox events and validates payloads |
+| `Flow_RuleBasedParse` | Applies alert rules and stores normalized output |
 
 ---
 
-## ☁️ Azure and Security Considerations
+## 🔐 Azure and Security Model
 
-This solution uses:
+This solution makes use of:
 
-- Azure App Registration for identity
-- Microsoft Graph for mailbox access and subscription management
-- Azure Key Vault for secure secret storage
-- Dataverse as the system of record for processed alerts
+- Azure App Registration for external identity and Graph access
+- Azure Key Vault to protect connection secrets and credentials
+- Dataverse connection references for secure, reusable runtime access
+- Microsoft Graph permissions aligned with mailbox monitoring needs
 
-The design follows a secure-by-default pattern, keeping sensitive credentials out of logic definitions and using connection references to manage runtime auth.
+The implementation follows a secure-by-default posture, keeping sensitive values outside the workflow logic itself.
 
 ---
 
-## 🧠 Why this matters for a portfolio
+## 🧠 Why this is a strong portfolio project
 
-This project demonstrates multiple strong Power Platform capabilities:
+This repository demonstrates a realistic low-code enterprise scenario that combines:
 
-- event-driven automation with Power Automate
-- integration with Microsoft Graph and Exchange Online
-- secure app identity and secret handling in Azure
-- structured data modeling in Dataverse
-- enterprise pattern design for operational alerting
+- event-driven automation
+- external system integration
+- secure identity configuration
+- structured data modeling
+- operational monitoring and auditability
 
-It is a good example of a real business use case that goes beyond simple CRUD and shows practical low-code architecture thinking.
+It shows that Power Platform is not limited to form-based apps or simple task workflows; it can support intelligent business monitoring and alert-driven processes.
 
 ---
 
@@ -162,8 +154,7 @@ JPMLSolutions-EAS-EmailAlertSystem/
 │   └── PowerAutomate/
 │       └── PowerAutomate_Overview.md
 ├── Solution/
-│   ├── README.md
-│   └── solution-assets/
+│   └── README.md
 ├── Screenshots/
 │   └── .gitkeep
 └── .git/
@@ -171,21 +162,21 @@ JPMLSolutions-EAS-EmailAlertSystem/
 
 ---
 
-## 🚀 Recommended Next Enhancements
+## 🚀 Recommended Next Steps
 
-1. Add sample exported records and example payloads.
-2. Document the Microsoft Graph permissions required for the mailbox subscriptions.
+1. Add real sample email payloads and parsed outputs.
+2. Document Microsoft Graph permissions and consent requirements.
 3. Add a test matrix for webhook validation and parsing edge cases.
-4. Extend the architecture with alert routing and notification actions.
-5. Connect the solution to a downstream operational dashboard or Teams notifications.
+4. Extend the architecture with Teams or email notification actions.
+5. Add dashboards or reporting views for alert volume and SLA tracking.
 
 ---
 
 ## 📌 Notes
 
-This repository is intentionally structured in the same portfolio-ready style as the Task Manager project, but focused on the Email Alert System scenario.
+This repository is intentionally structured to align with the style of a portfolio project and to illustrate a practical enterprise Power Platform solution.
 
-The goal is to show that the same Power Platform stack can support both task management and event-driven operational intelligence.
+It complements the Task Manager project and highlights a second use case: operational intelligence through email-triggered automation.
 
 ---
 
