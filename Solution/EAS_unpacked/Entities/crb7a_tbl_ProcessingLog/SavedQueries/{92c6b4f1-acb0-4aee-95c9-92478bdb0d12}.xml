@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>1</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{92c6b4f1-acb0-4aee-95c9-92478bdb0d12}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="crb7a_logname" select="1" icon="1" preview="1">
+        <row name="result" id="crb7a_tbl_processinglogid">
+          <cell name="crb7a_logname" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>4</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="crb7a_tbl_processinglog">
+          <attribute name="crb7a_tbl_processinglogid" />
+          <attribute name="crb7a_logname" />
+          <attribute name="createdon" />
+          <order attribute="crb7a_logname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <filter type="or" isquickfindfields="1">
+            <condition attribute="crb7a_logname" operator="like" value="{0}" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Localização Rápida de Entidades tbl_ProcessingLogs Ativas" languagecode="2070" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

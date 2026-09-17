@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{0d80b8a0-a091-46eb-8512-9be1d04c3b48}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{86424A4C-DB6C-4ED4-9192-6AFDD08E6AFE}" IsUserDefined="1">
+          <labels>
+            <label description="Geral" languagecode="2070" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{AC2AB444-085E-47A2-A146-7E76A5D27A8F}">
+                  <labels>
+                    <label description="Geral" languagecode="2070" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{12CD1FCF-D488-4972-9B15-D6CFA655F17B}">
+                        <labels>
+                          <label description="" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_logname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="crb7a_LogName" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{C24F0E5B-321D-4AB3-8424-BB4894C48F3D}">
+                        <labels>
+                          <label description="Proprietário" languagecode="2070" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f73d2611-b0e6-4b38-b1d3-fc71f915d587}">
+                        <labels>
+                          <label description="Processed Date" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_processeddate" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="crb7a_processeddate" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{a1f4d92f-0858-4b73-a254-397867552da0}">
+                        <labels>
+                          <label description="Stage Name" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_stagename" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_stagename" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f9a42912-057a-4981-9ae5-ebdfcf78d5b1}">
+                        <labels>
+                          <label description="Status" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_status" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="crb7a_status" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{da2149bb-f3b7-4e81-afe8-8f0d8aaac2a4}">
+                        <labels>
+                          <label description="Error Message" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_errormessage" classid="{e0dece4b-6fc8-4a8f-a065-082708572369}" datafieldname="crb7a_errormessage" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Informações" languagecode="2070" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Um formulário para esta entidade." languagecode="2070" />
+    </Descriptions>
+  </systemform>
+</forms>

@@ -1,0 +1,365 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_keyvault": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_AzureKeyVault"
+        },
+        "api": {
+          "name": "shared_keyvault"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_MicrosoftDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "Recurrence": {
+          "recurrence": {
+            "frequency": "Hour",
+            "interval": 12,
+            "startTime": "2026-08-17T09:00:00Z"
+          },
+          "metadata": {
+            "operationMetadataId": "d1e631e8-2f1b-47b6-8b33-d79b1cba3902"
+          },
+          "type": "Recurrence"
+        }
+      },
+      "actions": {
+        "Scope_-_Try": {
+          "actions": {
+            "HTTP_-_List_Subscriptions": {
+              "runAfter": {
+                "Run_a_Child_Flow_-_Get_Graph_Access_Token": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5fb92cb3-817c-4b0b-b147-48371fe4023a"
+              },
+              "type": "Http",
+              "inputs": {
+                "uri": "https://graph.microsoft.com/v1.0/subscriptions",
+                "method": "GET",
+                "headers": {
+                  "Authorization": "Bearer @{outputs('Run_a_Child_Flow_-_Get_Graph_Access_Token')?['body']?['access_token']}"
+                }
+              }
+            },
+            "Parse_JSON_-_List_Subscriptions": {
+              "runAfter": {
+                "HTTP_-_List_Subscriptions": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "36161350-2ec1-4b91-913e-6ef5305b3948"
+              },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-_List_Subscriptions')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "type": {
+                      "type": "string"
+                    },
+                    "properties": {
+                      "type": "object",
+                      "properties": {
+                        "value": {
+                          "type": "object",
+                          "properties": {
+                            "type": {
+                              "type": "string"
+                            },
+                            "items": {
+                              "type": "object",
+                              "properties": {
+                                "type": {
+                                  "type": "string"
+                                },
+                                "properties": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "resource": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "notificationUrl": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "expirationDateTime": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "string"
+                                        }
+                                      }
+                                    },
+                                    "clientState": {
+                                      "type": "object",
+                                      "properties": {
+                                        "type": {
+                                          "type": "array",
+                                          "items": {
+                                            "type": "string"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "Condition_-_Subscription_Exists": {
+              "actions": {
+                "HTTP_-_Renew_Subscription": {
+                  "metadata": {
+                    "operationMetadataId": "f405dc05-ba1f-488b-b83f-e6fe47c706a7"
+                  },
+                  "type": "Http",
+                  "inputs": {
+                    "uri": "https://graph.microsoft.com/v1.0/subscriptions/@{first(body('Parse_JSON_-_List_Subscriptions')?['value'])?['id']}",
+                    "method": "PATCH",
+                    "headers": {
+                      "Authorization": "Bearer @{outputs('Run_a_Child_Flow_-_Get_Graph_Access_Token')?['body']?['access_token']}"
+                    },
+                    "body": {
+                      "expirationDateTime": "@{addDays(utcNow(), 3)}"
+                    }
+                  }
+                }
+              },
+              "runAfter": {
+                "Get_secret_-_Client_State": [
+                  "Succeeded"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "HTTP_-_Create_Subscription": {
+                    "metadata": {
+                      "operationMetadataId": "f3b0a161-3ac6-420d-a8ad-1cb0fd172f2f"
+                    },
+                    "type": "Http",
+                    "inputs": {
+                      "uri": "https://graph.microsoft.com/v1.0/subscriptions",
+                      "method": "POST",
+                      "headers": {
+                        "Authorization": "Bearer @{outputs('Run_a_Child_Flow_-_Get_Graph_Access_Token')?['body']?['access_token']}"
+                      },
+                      "body": {
+                        "changeType": "created",
+                        "notificationUrl": "https://1d0e5b225320e6ce83b47139b81e3b.57.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/30/workflows/23e20d4cf44c44ffbc98c83be6106a8f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=x_K4tiHWQUVr6aztWEyOLTbQqhSKUxwUAG7yCzR3rZk",
+                        "resource": "users/JoaoMaiaLeal@JPMLSolutions.onmicrosoft.com/messages",
+                        "expirationDateTime": "@{addDays(utcNow(), 3)}",
+                        "clientState": "@outputs('Get_secret_-_Client_State')?['body/value']"
+                      }
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "greater": [
+                  "@length(body('Parse_JSON_-_List_Subscriptions')?['value'])",
+                  0
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5fa2fd21-681b-4e21-bd4c-a524b2ba8aea"
+              },
+              "type": "If"
+            },
+            "Run_a_Child_Flow_-_Get_Graph_Access_Token": {
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "1dbc2b4b-b19d-f111-b8db-70a8a52c9eca"
+                }
+              }
+            },
+            "Get_secret_-_Client_State": {
+              "runAfter": {
+                "Parse_JSON_-_List_Subscriptions": [
+                  "Succeeded"
+                ]
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "secretName": "EASClientState"
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_keyvault",
+                  "operationId": "GetSecret",
+                  "connectionName": "shared_keyvault"
+                }
+              }
+            }
+          },
+          "runAfter": {},
+          "type": "Scope"
+        },
+        "Scope_-_Finally": {
+          "actions": {
+            "Condition_-_Catch_Was_Skipped": {
+              "actions": {
+                "Add_a_new_row_-_Log_Sucess": {
+                  "metadata": {
+                    "operationMetadataId": "89fe86dd-c861-413f-879c-b5986d27a7e0"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_logname": "Subscription Renew - Completed",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "SubscriptionRenew",
+                      "item/crb7a_status": 884000001
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                }
+              },
+              "else": {
+                "actions": {}
+              },
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@actions('Scope_-_Catch')?['status']",
+                      "Skipped"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "6397af1a-07bb-485e-8eab-198de6e72458"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Catch": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Catch": {
+          "actions": {
+            "Filter_array_-_Scope_Try": {
+              "type": "Query",
+              "inputs": {
+                "from": "@result('Scope_-_Try')",
+                "where": "@equals(item()?['status'],'Failed')"
+              }
+            },
+            "Compose_-_Get_Error_Message": {
+              "runAfter": {
+                "Filter_array_-_Scope_Try": [
+                  "Succeeded"
+                ]
+              },
+              "type": "Compose",
+              "inputs": "@first(body('Filter_array_-_Scope_Try'))?['outputs']?['body']?['error']?['message']"
+            },
+            "Add_a_new_row_-_Log_Failure": {
+              "runAfter": {
+                "Compose_-_Get_Error_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a3b76441-29b0-487a-bb12-9eaab928af9c"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "crb7a_tbl_processinglogs",
+                  "item/crb7a_errormessage": "@outputs('Compose_-_Get_Error_Message')",
+                  "item/crb7a_logname": "Subscription Renew - Failed",
+                  "item/crb7a_processeddate": "@utcNow()",
+                  "item/crb7a_runid": "@workflow()?['run']?['name']",
+                  "item/crb7a_stagename": "SubscriptionRenew",
+                  "item/crb7a_status": 884000002
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Scope_-_Try": [
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

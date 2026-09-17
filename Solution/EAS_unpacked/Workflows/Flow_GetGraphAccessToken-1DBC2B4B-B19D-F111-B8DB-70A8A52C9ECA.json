@@ -1,0 +1,340 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_keyvault": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_AzureKeyVault"
+        },
+        "api": {
+          "name": "shared_keyvault"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "impersonation": {},
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_MicrosoftDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "8365cc95-6b91-4269-a3be-ea954396be46"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Scope_-_Try": {
+          "actions": {
+            "Get_secret_-_Client_Secret": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "4ce5b4e1-d333-4e82-87c2-9f1693d89646"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_keyvault",
+                  "operationId": "GetSecret",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_keyvault"
+                },
+                "parameters": {
+                  "secretName": "AppRegistration-ClientSecret"
+                },
+                "authentication": {
+                  "type": "Raw",
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                }
+              }
+            },
+            "Get_secret_-_Client_Id": {
+              "runAfter": {
+                "Get_secret_-_Client_Secret": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "9de4131d-4e92-4445-b02e-b46ba10d71b5"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_keyvault",
+                  "operationId": "GetSecret",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_keyvault"
+                },
+                "parameters": {
+                  "secretName": "AppRegistration-ClientID"
+                },
+                "authentication": {
+                  "type": "Raw",
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                }
+              }
+            },
+            "HTTP_-_Get_Token": {
+              "runAfter": {
+                "Get_secret_-_Client_Id": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "40847c3c-dfe0-4bae-8375-af997d552bc7"
+              },
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://login.microsoftonline.com/887955ab-b9a2-4c6c-916d-997350cce366/oauth2/v2.0/token",
+                "headers": {
+                  "Content-Type": "application/x-www-form-urlencoded"
+                },
+                "body": "grant_type=client_credentials&client_id=@{body('Get_secret_-_Client_Id')?['value']}&client_secret=@{body('Get_secret_-_Client_Secret')?['value']}&scope=https://graph.microsoft.com/.default"
+              }
+            },
+            "Parse_JSON": {
+              "runAfter": {
+                "HTTP_-_Get_Token": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "48cc902d-5f5a-4219-aec3-8fcdae224999"
+              },
+              "type": "ParseJson",
+              "inputs": {
+                "content": "@body('HTTP_-_Get_Token')",
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer"
+                    }
+                  }
+                }
+              }
+            },
+            "Respond_to_a_Power_App_or_flow_-_Sucess": {
+              "runAfter": {
+                "Parse_JSON": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "4477a73f-c849-4d40-a94b-7513ca36a802"
+              },
+              "type": "Response",
+              "kind": "PowerApp",
+              "inputs": {
+                "statusCode": 200,
+                "body": {
+                  "access_token": "@{body('Parse_JSON')?['access_token']}"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "title": "access_token",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "e3715831-bb3e-45ba-ac6e-3cecfcb5dc9e"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Catch": {
+          "actions": {
+            "Filter_array_-_Scope_Try": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "989044a8-2e4b-4582-9ea2-b35890e650df"
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@result('Scope_-_Try')",
+                "where": "@equals(item()?['status'], 'Failed')"
+              }
+            },
+            "Compose_-_Get_Error_Message": {
+              "runAfter": {
+                "Filter_array_-_Scope_Try": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "10361b86-2a0e-4ed1-a480-e6d09ff4a62b"
+              },
+              "type": "Compose",
+              "inputs": "@   first(body('Filter_array_-_Scope_Try'))?['outputs']?['body']?['error']?['message']"
+            },
+            "Add_a_new_row_-_Log_Failure": {
+              "runAfter": {
+                "Compose_-_Get_Error_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2afc3108-db2c-4839-94f1-17109d856b08"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "crb7a_tbl_processinglogs",
+                  "item/crb7a_errormessage": "@outputs('Compose_-_Get_Error_Message')",
+                  "item/crb7a_logname": "Get Graph Access Token - Failed",
+                  "item/crb7a_processeddate": "@utcNow()",
+                  "item/crb7a_runid": "@workflow()?['run']?['name']",
+                  "item/crb7a_stagename": "Authentication",
+                  "item/crb7a_status": 884000002
+                },
+                "authentication": {
+                  "type": "Raw",
+                  "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                }
+              }
+            },
+            "Respond_to_a_Power_App_or_flow_-_Failure": {
+              "runAfter": {
+                "Add_a_new_row_-_Log_Failure": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "28c861be-0ba9-46b4-9502-53e96531eeaf"
+              },
+              "type": "Response",
+              "kind": "PowerApp",
+              "inputs": {
+                "statusCode": 200,
+                "body": {
+                  "access_token": "Error"
+                },
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "title": "access_token",
+                      "x-ms-dynamically-added": true,
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Scope_-_Try": [
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7c3e1c60-9c57-48cb-b6ac-827eaf6e3062"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Finally": {
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Add_a_new_row_-_Log_Success": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "d78c7d1b-5612-4364-807c-48d89c962675"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_logname": "Get Graph Access Token - Completed",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "Authentication",
+                      "item/crb7a_status": 884000001
+                    },
+                    "authentication": {
+                      "type": "Raw",
+                      "value": "@json(decodeBase64(triggerOutputs().headers['X-MS-APIM-Tokens']))['$ConnectionKey']"
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "equals": [
+                  "@actions('Scope_-_Catch')?['status']",
+                  "Skipped"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2f155c49-4f7f-4230-91f2-eb93a0f3ab30"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Catch": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "92a10543-729c-4e15-ba45-61878fd61e04"
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

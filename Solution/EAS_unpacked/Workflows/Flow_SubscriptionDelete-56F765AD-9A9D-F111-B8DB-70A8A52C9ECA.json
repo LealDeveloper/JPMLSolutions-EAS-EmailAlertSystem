@@ -1,0 +1,202 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_MicrosoftDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        },
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "527ba272-7a79-4934-8089-3e8253ea1f3c"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Scope_-_Try": {
+          "actions": {
+            "HTTP_-_Delete_Subscription": {
+              "runAfter": {
+                "Run_a_Child_Flow_-_Get_Graph_Access_Token": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "45aa444e-6271-46fd-972e-88aece690a2a"
+              },
+              "type": "Http",
+              "inputs": {
+                "uri": "https://graph.microsoft.com/v1.0/subscriptions/6e437a3d-7571-4412-97aa-d4ad54fcc9ce",
+                "method": "DELETE",
+                "headers": {
+                  "Authorization": "Bearer @{outputs('Run_a_Child_Flow_-_Get_Graph_Access_Token')?['body']?['access_token']}"
+                }
+              }
+            },
+            "Run_a_Child_Flow_-_Get_Graph_Access_Token": {
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "1dbc2b4b-b19d-f111-b8db-70a8a52c9eca"
+                }
+              }
+            }
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "e6ffe6fd-faa3-41cc-b57e-c9eecbb3fb58"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Catch": {
+          "actions": {
+            "Add_a_new_row_-_Log_Failure": {
+              "runAfter": {
+                "Compose_-_Get_Error_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a3b76441-29b0-487a-bb12-9eaab928af9c"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "crb7a_tbl_processinglogs",
+                  "item/crb7a_errormessage": "@outputs('Compose_-_Get_Error_Message')",
+                  "item/crb7a_logname": "Subscription Delete - Failed",
+                  "item/crb7a_processeddate": "@utcNow()",
+                  "item/crb7a_runid": "@workflow()?['run']?['name']",
+                  "item/crb7a_stagename": "SubscriptionDelete",
+                  "item/crb7a_status": 884000002
+                },
+                "host": {
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "connectionName": "shared_commondataserviceforapps"
+                }
+              }
+            },
+            "Filter_array_-_Scope_Try": {
+              "metadata": {
+                "operationMetadataId": "f74eb5e0-7f0b-4e67-8b82-b768c2af9a6d"
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@result('Scope_-_Try')",
+                "where": "@equals(item()?['status'], 'Failed')"
+              }
+            },
+            "Compose_-_Get_Error_Message": {
+              "runAfter": {
+                "Filter_array_-_Scope_Try": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "9fe542f5-fb13-48c0-ad08-b38300e87c6b"
+              },
+              "type": "Compose",
+              "inputs": "@   first(body('Filter_array_-_Scope_Try'))?['outputs']?['body']?['error']?['message']"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Try": [
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "b4c409dd-1dfc-4d98-8094-7c6b905a4bb1"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Finally": {
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Add_a_new_row_-_Log_Sucess": {
+                  "metadata": {
+                    "operationMetadataId": "89fe86dd-c861-413f-879c-b5986d27a7e0"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_logname": "Subscription Delete - Completed",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "SubscriptionDelete",
+                      "item/crb7a_status": 884000001
+                    },
+                    "host": {
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "connectionName": "shared_commondataserviceforapps"
+                    }
+                  }
+                }
+              },
+              "else": {
+                "actions": {}
+              },
+              "expression": {
+                "equals": [
+                  "@actions('Scope_-_Catch')?['status']",
+                  "Skipped"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "6397af1a-07bb-485e-8eab-198de6e72458"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Catch": [
+              "Succeeded",
+              "Failed",
+              "Skipped",
+              "TimedOut"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "9949ae88-b76e-462c-a9fd-647a040320d2"
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": null
+  },
+  "schemaVersion": "1.0.0.0"
+}

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{a1b76c43-589c-4377-97a8-2622c1909ceb}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="crb7a_rulename" select="1" icon="1" preview="1">
+        <row name="result" id="crb7a_tbl_alertruleid">
+          <cell name="crb7a_rulename" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="crb7a_tbl_alertrule">
+          <attribute name="crb7a_tbl_alertruleid" />
+          <attribute name="crb7a_rulename" />
+          <attribute name="createdon" />
+          <order attribute="crb7a_rulename" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="1" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Entidades tbl_AlertRules Inativas" languagecode="2070" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

@@ -1,0 +1,52 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{9a941c5e-5dbb-48c8-aa52-a2687b8b7a0f}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{C2EB9674-6A86-4922-939B-4E670EA4ED7D}" IsUserDefined="1">
+          <labels>
+            <label description="" languagecode="2070" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{A51A643F-695B-4E13-BA04-A599BB270218}">
+                  <labels>
+                    <label description="GERAL" languagecode="2070" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{669F461D-D4E9-448D-93E1-542ABB7E45B9}">
+                        <labels>
+                          <label description="" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_alertchannelname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="crb7a_AlertChannelName" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{FBADC69F-08EE-4B20-A3A9-7B389F99DD58}">
+                        <labels>
+                          <label description="Proprietário" languagecode="2070" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Informações" languagecode="2070" />
+    </LocalizedNames>
+  </systemform>
+</forms>

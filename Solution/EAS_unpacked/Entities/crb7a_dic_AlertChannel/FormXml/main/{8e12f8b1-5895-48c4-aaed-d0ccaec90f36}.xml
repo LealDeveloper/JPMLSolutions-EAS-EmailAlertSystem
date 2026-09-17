@@ -1,0 +1,63 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{8e12f8b1-5895-48c4-aaed-d0ccaec90f36}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{FD44B6D9-45F2-4393-8E9B-EA9B597A9C42}" IsUserDefined="1">
+          <labels>
+            <label description="Geral" languagecode="2070" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{1FAEE538-0247-4A81-9C02-26879E6715E5}">
+                  <labels>
+                    <label description="Geral" languagecode="2070" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{F6AD0F5A-F399-4B3E-948C-88018B80F475}">
+                        <labels>
+                          <label description="" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_alertchannelname" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="crb7a_AlertChannelName" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{46759664-60CD-44C1-A3FB-CFB71D849548}">
+                        <labels>
+                          <label description="Proprietário" languagecode="2070" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{b9ca967d-eb49-4eb4-8914-c2ceeb2f4a1c}">
+                        <labels>
+                          <label description="Channel Type" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_channeltype" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="crb7a_channeltype" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Informações" languagecode="2070" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Um formulário para esta entidade." languagecode="2070" />
+    </Descriptions>
+  </systemform>
+</forms>

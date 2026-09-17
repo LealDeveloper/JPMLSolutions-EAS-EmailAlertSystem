@@ -1,0 +1,103 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{5502413b-9c95-49aa-b90e-f48cca822701}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{DB2000C3-1DE7-43B7-8C54-295E165EAD1C}" IsUserDefined="1">
+          <labels>
+            <label description="Geral" languagecode="2070" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{1B287111-828F-480C-B929-944AB9620C00}">
+                  <labels>
+                    <label description="Geral" languagecode="2070" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{9C109E75-9BCB-45CF-92D7-43AB92C007CE}">
+                        <labels>
+                          <label description="" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_rulename" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="crb7a_RuleName" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{BD47403D-6513-4598-A700-FD998656C229}">
+                        <labels>
+                          <label description="Proprietário" languagecode="2070" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{9dd4fac6-05fd-4cf5-99af-ab1444473037}">
+                        <labels>
+                          <label description="Priority" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_priority" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="crb7a_priority" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{9f1bd09e-e334-4fe5-b9ab-e5d6b4111806}">
+                        <labels>
+                          <label description="Is Active" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_isactive" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="crb7a_isactive" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{86af10ac-1c3a-462f-be73-5c75add0b2df}">
+                        <labels>
+                          <label description="Created Date" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_createddate" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="crb7a_createddate" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{6f450358-333f-4be6-967a-18f3dc412c09}">
+                        <labels>
+                          <label description="Match Type" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_matchtype" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="crb7a_matchtype" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7fc717b0-4f87-4960-a5dd-5d2700c552f8}">
+                        <labels>
+                          <label description="Pattern Value" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_patternvalue" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_patternvalue" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{cf70088d-3ad6-4537-8f56-57b6207944c6}">
+                        <labels>
+                          <label description="Recipient" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_recipient" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_recipient" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Informações" languagecode="2070" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Um formulário para esta entidade." languagecode="2070" />
+    </Descriptions>
+  </systemform>
+</forms>

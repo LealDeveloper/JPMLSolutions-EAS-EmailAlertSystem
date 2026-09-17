@@ -1,0 +1,11 @@
+<environmentvariabledefinition schemaname="crb7a_EV_EAS_SubscriptionExpirationDays">
+  <defaultvalue>3</defaultvalue>
+  <displayname default="EV_EAS_SubscriptionExpirationDays">
+    <label description="EV_EAS_SubscriptionExpirationDays" languagecode="2070" />
+  </displayname>
+  <introducedversion>1.0.0.0</introducedversion>
+  <iscustomizable>1</iscustomizable>
+  <isrequired>0</isrequired>
+  <secretstore>0</secretstore>
+  <type>100000000</type>
+</environmentvariabledefinition>

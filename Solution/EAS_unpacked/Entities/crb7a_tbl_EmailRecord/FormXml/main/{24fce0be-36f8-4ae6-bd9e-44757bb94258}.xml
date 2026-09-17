@@ -1,0 +1,135 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<forms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <systemform>
+    <formid>{24fce0be-36f8-4ae6-bd9e-44757bb94258}</formid>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <FormPresentation>1</FormPresentation>
+    <FormActivationState>1</FormActivationState>
+    <form>
+      <tabs>
+        <tab verticallayout="true" id="{8FCA9A66-A9E4-4B65-9AA8-CEFAFC2BA431}" IsUserDefined="1">
+          <labels>
+            <label description="Geral" languagecode="2070" />
+          </labels>
+          <columns>
+            <column width="100%">
+              <sections>
+                <section showlabel="false" showbar="false" IsUserDefined="0" id="{1AF10E3F-243B-4371-B26F-253D054B28A7}">
+                  <labels>
+                    <label description="Geral" languagecode="2070" />
+                  </labels>
+                  <rows>
+                    <row>
+                      <cell id="{CD0C28A5-28B9-4B21-A826-9D337B2B4EF1}">
+                        <labels>
+                          <label description="" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_emailsubject" classid="{4273EDBD-AC1D-40d3-9FB2-095C621B552D}" datafieldname="crb7a_EmailSubject" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{BD54979E-8A8B-4116-8156-ECDD46062C47}">
+                        <labels>
+                          <label description="Proprietário" languagecode="2070" />
+                        </labels>
+                        <control id="ownerid" classid="{270BD3DB-D9AF-4782-9025-509E298DEC0A}" datafieldname="ownerid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{9407b916-f80b-4428-b7e3-835dbd77d63e}">
+                        <labels>
+                          <label description="Sender Email" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_senderemail" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_senderemail" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{90de04a3-60c5-47ad-9900-bf7c99173faf}">
+                        <labels>
+                          <label description="Received Date" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_receiveddate" classid="{5b773807-9fb2-42db-97c3-7a91eff8adff}" datafieldname="crb7a_receiveddate" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{1fd184d7-85aa-45c1-a7db-6d96da59d973}">
+                        <labels>
+                          <label description="Is Read" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_isread" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="crb7a_isread" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{965ca224-c045-42be-88cc-01969b1beb4f}">
+                        <labels>
+                          <label description="Body Preview" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_bodypreview" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_bodypreview" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{e0029aea-ff6a-42b8-b765-6b31a9468589}">
+                        <labels>
+                          <label description="Priority Number" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_prioritynumber" classid="{c6d124ca-7eda-4a60-aea9-7fb8d318b68f}" datafieldname="crb7a_prioritynumber" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{25bff9eb-0ffe-438e-b798-0e8b48d82f5b}">
+                        <labels>
+                          <label description="Has Attachment" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_hasattachment" classid="{67fac785-cd58-4f9f-abb3-4b7ddc6ed5ed}" datafieldname="crb7a_hasattachment" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{c6239b9e-1ef1-40a8-b730-6ca594649168}">
+                        <labels>
+                          <label description="Parse Method" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_parsemethod" classid="{3ef39988-22bb-4f0b-bbbe-64b5a3748aee}" datafieldname="crb7a_parsemethod" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{7ef42a81-24cb-4cd6-912a-1ad49bc4bb3e}">
+                        <labels>
+                          <label description="Status" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_status" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_status" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{040cbcd2-a63c-4ef3-8bf1-5386bfbd7f57}">
+                        <labels>
+                          <label description="Graph Message ID" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_graphmessageid" classid="{4273edbd-ac1d-40d3-9fb2-095c621b552d}" datafieldname="crb7a_graphmessageid" />
+                      </cell>
+                    </row>
+                    <row>
+                      <cell id="{f6e62fce-4fe3-4e3f-b0bf-41da91692b9b}">
+                        <labels>
+                          <label description="Confidence Score" languagecode="2070" />
+                        </labels>
+                        <control id="crb7a_confidencescore" classid="{c3efe0c3-0ec6-42be-8349-cbd9079dfd8e}" datafieldname="crb7a_confidencescore" />
+                      </cell>
+                    </row>
+                  </rows>
+                </section>
+              </sections>
+            </column>
+          </columns>
+        </tab>
+      </tabs>
+    </form>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>1</CanBeDeleted>
+    <LocalizedNames>
+      <LocalizedName description="Informações" languagecode="2070" />
+    </LocalizedNames>
+    <Descriptions>
+      <Description description="Um formulário para esta entidade." languagecode="2070" />
+    </Descriptions>
+  </systemform>
+</forms>

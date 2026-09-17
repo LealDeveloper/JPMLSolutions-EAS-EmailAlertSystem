@@ -1,0 +1,356 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_MicrosoftDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "When_a_row_is_added": {
+          "metadata": {
+            "operationMetadataId": "90e35e57-0bd8-494b-8763-5af233d50c37"
+          },
+          "type": "OpenApiConnectionWebhook",
+          "inputs": {
+            "host": {
+              "connectionName": "shared_commondataserviceforapps",
+              "operationId": "SubscribeWebhookTrigger",
+              "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+            },
+            "parameters": {
+              "subscriptionRequest/message": 1,
+              "subscriptionRequest/entityname": "crb7a_tbl_emailrecord",
+              "subscriptionRequest/scope": 4
+            },
+            "authentication": "@parameters('$authentication')"
+          }
+        }
+      },
+      "actions": {
+        "Scope_-_Try": {
+          "actions": {
+            "List_rows_-_Active_Alert_Rules": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "1a6bf2da-2ca7-4d5d-981e-f5fe80026cfa"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "ListRecords",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "crb7a_tbl_alertrules",
+                  "$filter": "crb7a_isactive eq true"
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            },
+            "Select_-_Evaluate_Rules": {
+              "runAfter": {
+                "List_rows_-_Active_Alert_Rules": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "80bfabf7-02ba-4e21-98e1-d64378696093"
+              },
+              "type": "Select",
+              "inputs": {
+                "from": "@body('List_rows_-_Active_Alert_Rules')?['value']",
+                "select": {
+                  "RuleId": "@item()?['crb7a_tbl_alertruleid']",
+                  "CategoryId": "@item()?['_crb7a_emailcategory_value']",
+                  "Priority": "@item()?['crb7a_priority']",
+                  "IsMatch": "@if(equals(item()?['crb7a_matchtype'], 884000000), contains(toLower(coalesce(triggerBody()?['crb7a_senderemail'], '')), toLower(item()?['crb7a_patternvalue'])), if(equals(item()?['crb7a_matchtype'], 884000001), contains(toLower(coalesce(triggerBody()?['crb7a_emailsubject'], '')), toLower(item()?['crb7a_patternvalue'])), if(equals(item()?['crb7a_matchtype'], 884000002), contains(toLower(coalesce(triggerBody()?['crb7a_bodypreview'], '')), toLower(item()?['crb7a_patternvalue'])), false)))"
+                }
+              },
+              "description": "TODO: Match Type Regex (884000003) is intentionally NOT implemented and falls through to false. Regex needs an Azure Function (Regex.IsMatch) called as a separate action once a real regex rule exists."
+            },
+            "Filter_array_-_Matched_Rules": {
+              "runAfter": {
+                "Select_-_Evaluate_Rules": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "210edd6c-633a-4a9d-9eaa-1c3722521ae9"
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@body('Select_-_Evaluate_Rules')",
+                "where": "@equals(item()?['IsMatch'], true)"
+              }
+            },
+            "Condition_-_Has_Match": {
+              "actions": {
+                "Compose_-_First_Match": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "7886f370-0198-4533-9ee0-846993c9409e"
+                  },
+                  "type": "Compose",
+                  "inputs": "@first(body('Filter_array_-_Matched_Rules'))"
+                },
+                "Update_a_row_-_Categorize_Email": {
+                  "runAfter": {
+                    "Compose_-_First_Match": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "815f6c0c-23b3-41a0-8167-4808e6aa3c1c"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "UpdateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "crb7a_tbl_emailrecords",
+                      "recordId": "@triggerBody()?['crb7a_tbl_emailrecordid']",
+                      "item/crb7a_EmailCategory@odata.bind": "@concat('/crb7a_dic_emailcategories(', outputs('Compose_-_First_Match')?['CategoryId'], ')')",
+                      "item/crb7a_parsemethod": 884000000,
+                      "item/crb7a_prioritynumber": "@outputs('Compose_-_First_Match')?['Priority']",
+                      "item/crb7a_status": "Categorized"
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                },
+                "Add_a_new_row_-_Log_Match": {
+                  "runAfter": {
+                    "Update_a_row_-_Categorize_Email": [
+                      "Succeeded"
+                    ]
+                  },
+                  "metadata": {
+                    "operationMetadataId": "36f303f0-0adb-4b7a-bc3f-b73b67cf94c6"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_EmailRecord@odata.bind": "@concat('/crb7a_tbl_emailrecords(', triggerBody()?['crb7a_tbl_emailrecordid'], ')')",
+                      "item/crb7a_logname": "RuleBasedParse - Match Found",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "RuleBasedParse",
+                      "item/crb7a_status": 884000001
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {
+                "Filter_array_-_Matched_Rules": [
+                  "Succeeded"
+                ]
+              },
+              "else": {
+                "actions": {
+                  "Add_a_new_row_-_Log_No_Match": {
+                    "runAfter": {},
+                    "metadata": {
+                      "operationMetadataId": "7bad45c9-4657-41a5-9d98-e9eb05d196ff"
+                    },
+                    "type": "OpenApiConnection",
+                    "inputs": {
+                      "host": {
+                        "connectionName": "shared_commondataserviceforapps",
+                        "operationId": "CreateRecord",
+                        "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                      },
+                      "parameters": {
+                        "entityName": "crb7a_tbl_processinglogs",
+                        "item/crb7a_EmailRecord@odata.bind": "@concat('/crb7a_tbl_emailrecords(', triggerBody()?['crb7a_tbl_emailrecordid'], ')')",
+                        "item/crb7a_logname": "RuleBasedParse - No Match",
+                        "item/crb7a_processeddate": "@utcNow()",
+                        "item/crb7a_runid": "@workflow()?['run']?['name']",
+                        "item/crb7a_stagename": "RuleBasedParse - No Match",
+                        "item/crb7a_status": 884000000
+                      },
+                      "authentication": "@parameters('$authentication')"
+                    }
+                  }
+                }
+              },
+              "expression": {
+                "and": [
+                  {
+                    "greater": [
+                      "@length(body('Filter_array_-_Matched_Rules'))",
+                      0
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "2da47f6c-3f02-4f69-9c3e-aa11923a75bd"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "c964f625-977c-4673-a44e-b9a55d5cef46"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Catch": {
+          "actions": {
+            "Filter_array_-_Scope_Try": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "4432b167-2aba-4c76-a0ba-032a9402ddc0"
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@result('Scope_-_Try')",
+                "where": "@equals(item()?['status'],'Failed')"
+              }
+            },
+            "Compose_-_Get_Error_Message": {
+              "runAfter": {
+                "Filter_array_-_Scope_Try": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "c0961d31-2563-41e2-8b91-9ef3a10f7d18"
+              },
+              "type": "Compose",
+              "inputs": "@first(body('Filter_array_-_Scope_Try'))?['outputs']?['body']?['error']?['message']"
+            },
+            "Add_a_new_row_-_Log_Failure": {
+              "runAfter": {
+                "Compose_-_Get_Error_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "f1cdc31b-9960-46bd-968f-af232d62c27b"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                },
+                "parameters": {
+                  "entityName": "crb7a_tbl_processinglogs",
+                  "item/crb7a_errormessage": "@outputs('Compose_-_Get_Error_Message')",
+                  "item/crb7a_logname": "RuleBasedParse - Failed",
+                  "item/crb7a_processeddate": "@utcNow()",
+                  "item/crb7a_runid": "@workflow()?['run']?['name']",
+                  "item/crb7a_stagename": "RuleBasedParse",
+                  "item/crb7a_status": 884000002
+                },
+                "authentication": "@parameters('$authentication')"
+              }
+            }
+          },
+          "runAfter": {
+            "Scope_-_Try": [
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "678e215b-9fc5-4e7b-862e-dc4cc45b79bf"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Finally": {
+          "actions": {
+            "Condition_-_Catch_Was_Skipped": {
+              "actions": {
+                "Add_a_new_row_-_Log_Success": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "83800251-44a9-4627-be6f-ea3f87de5604"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    },
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_logname": "RuleBasedParse - Completed",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "RuleBasedParse",
+                      "item/crb7a_status": 884000001
+                    },
+                    "authentication": "@parameters('$authentication')"
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@actions('Scope_-_Catch')?['status']",
+                      "Skipped"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "7cb2e975-3791-4732-bdc0-cd7e61be8a46"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Catch": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "178543c0-5cbc-4b7f-9cac-0cae80bd681f"
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}

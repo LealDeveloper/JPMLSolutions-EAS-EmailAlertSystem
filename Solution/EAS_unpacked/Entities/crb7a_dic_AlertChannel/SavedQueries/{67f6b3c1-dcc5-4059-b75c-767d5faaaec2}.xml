@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>0</isdefault>
+    <savedqueryid>{67f6b3c1-dcc5-4059-b75c-767d5faaaec2}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="crb7a_alertchannelname" select="1" icon="1" preview="1">
+        <row name="result" id="crb7a_dic_alertchannelid">
+          <cell name="crb7a_alertchannelname" width="300" />
+          <cell name="createdon" width="125" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="crb7a_dic_alertchannel">
+          <attribute name="crb7a_dic_alertchannelid" />
+          <attribute name="crb7a_alertchannelname" />
+          <attribute name="createdon" />
+          <order attribute="crb7a_alertchannelname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="1" />
+          </filter>
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Entidades dic_AlertChannels Inativas" languagecode="2070" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

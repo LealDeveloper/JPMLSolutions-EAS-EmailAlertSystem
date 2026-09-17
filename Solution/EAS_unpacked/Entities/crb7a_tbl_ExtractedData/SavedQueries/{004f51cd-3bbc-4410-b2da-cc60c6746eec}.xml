@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<savedqueries xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <savedquery>
+    <IsCustomizable>1</IsCustomizable>
+    <CanBeDeleted>0</CanBeDeleted>
+    <isquickfindquery>0</isquickfindquery>
+    <isprivate>0</isprivate>
+    <isdefault>1</isdefault>
+    <savedqueryid>{004f51cd-3bbc-4410-b2da-cc60c6746eec}</savedqueryid>
+    <layoutxml>
+      <grid name="resultset" jump="crb7a_dataname" select="1" icon="1" preview="1">
+        <row name="result" id="crb7a_tbl_extracteddataid">
+          <cell name="crb7a_dataname" width="300" />
+          <cell name="crb7a_extracteddate" width="150" />
+          <cell name="crb7a_fieldname" width="150" />
+          <cell name="crb7a_fieldvalue" width="150" />
+          <cell name="crb7a_confidencescore" width="150" />
+        </row>
+      </grid>
+    </layoutxml>
+    <querytype>0</querytype>
+    <fetchxml>
+      <fetch version="1.0" mapping="logical">
+        <entity name="crb7a_tbl_extracteddata">
+          <attribute name="crb7a_tbl_extracteddataid" />
+          <attribute name="crb7a_dataname" />
+          <attribute name="createdon" />
+          <order attribute="crb7a_dataname" descending="false" />
+          <filter type="and">
+            <condition attribute="statecode" operator="eq" value="0" />
+          </filter>
+          <attribute name="crb7a_extracteddate" />
+          <attribute name="crb7a_fieldname" />
+          <attribute name="crb7a_fieldvalue" />
+          <attribute name="crb7a_confidencescore" />
+        </entity>
+      </fetch>
+    </fetchxml>
+    <IntroducedVersion>1.0</IntroducedVersion>
+    <LocalizedNames>
+      <LocalizedName description="Entidades tbl_ExtractedData Ativas" languagecode="2070" />
+    </LocalizedNames>
+  </savedquery>
+</savedqueries>

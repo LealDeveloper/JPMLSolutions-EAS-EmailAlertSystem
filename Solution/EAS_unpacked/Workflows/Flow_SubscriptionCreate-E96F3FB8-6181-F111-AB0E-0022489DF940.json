@@ -1,0 +1,252 @@
+{
+  "properties": {
+    "connectionReferences": {
+      "shared_keyvault": {
+        "runtimeSource": "invoker",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_AzureKeyVault"
+        },
+        "api": {
+          "name": "shared_keyvault"
+        }
+      },
+      "shared_commondataserviceforapps": {
+        "runtimeSource": "embedded",
+        "connection": {
+          "connectionReferenceLogicalName": "jpml_CR_MicrosoftDataverse"
+        },
+        "api": {
+          "name": "shared_commondataserviceforapps"
+        }
+      }
+    },
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "undefined",
+      "parameters": {
+        "$connections": {
+          "defaultValue": {},
+          "type": "Object"
+        },
+        "$authentication": {
+          "defaultValue": {},
+          "type": "SecureObject"
+        }
+      },
+      "triggers": {
+        "manual": {
+          "metadata": {
+            "operationMetadataId": "966b7bf7-27c2-46cf-b913-bdd740d279cd"
+          },
+          "type": "Request",
+          "kind": "Button",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {},
+              "required": []
+            }
+          }
+        }
+      },
+      "actions": {
+        "Scope_-_Try": {
+          "actions": {
+            "HTTP_-_Create_Subscription": {
+              "runAfter": {
+                "Get_secret_-_Client_State": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "7703901a-1909-4070-96a6-6093ae052c98"
+              },
+              "type": "Http",
+              "inputs": {
+                "method": "POST",
+                "uri": "https://graph.microsoft.com/v1.0/subscriptions",
+                "headers": {
+                  "Authorization": "Bearer @{outputs('Run_a_Child_Flow_-_Get_Graph_Access_Token')?['body']?['access_token']}"
+                },
+                "body": {
+                  "changeType": "created",
+                  "notificationUrl": "https://1d0e5b225320e6ce83b47139b81e3b.57.environment.api.powerplatform.com:443/powerautomate/automations/direct/cu/30/workflows/23e20d4cf44c44ffbc98c83be6106a8f/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=x_K4tiHWQUVr6aztWEyOLTbQqhSKUxwUAG7yCzR3rZk",
+                  "resource": "users/JoaoMaiaLeal@JPMLSolutions.onmicrosoft.com/messages",
+                  "expirationDateTime": "@{addDays(utcNow(), 3)}",
+                  "clientState": "@{outputs('Get_secret_-_Client_State')?['body']?['value']}"
+                }
+              },
+              "runtimeConfiguration": {
+                "contentTransfer": {
+                  "transferMode": "Chunked"
+                }
+              }
+            },
+            "Get_secret_-_Client_State": {
+              "runAfter": {
+                "Run_a_Child_Flow_-_Get_Graph_Access_Token": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "5de41811-a339-4f0d-9aa5-7027cde7cf5b"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "secretName": "EASClientState"
+                },
+                "host": {
+                  "connectionName": "shared_keyvault",
+                  "operationId": "GetSecret",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_keyvault"
+                }
+              }
+            },
+            "Run_a_Child_Flow_-_Get_Graph_Access_Token": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "f52c272f-5546-4470-99b6-453e8c2725ef"
+              },
+              "type": "Workflow",
+              "inputs": {
+                "host": {
+                  "workflowReferenceName": "1dbc2b4b-b19d-f111-b8db-70a8a52c9eca"
+                }
+              }
+            }
+          },
+          "runAfter": {},
+          "metadata": {
+            "operationMetadataId": "dae492b2-58d3-4d46-8702-330d3883b311"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Catch": {
+          "actions": {
+            "Filter_array_-_Scope_Try": {
+              "runAfter": {},
+              "metadata": {
+                "operationMetadataId": "d069999e-8fb2-42d5-bcd9-b6c00802dff7"
+              },
+              "type": "Query",
+              "inputs": {
+                "from": "@result('Scope_-_Try')",
+                "where": "@equals(item()?['status'],'Failed')"
+              }
+            },
+            "Compose_-_Get_Error_Message": {
+              "runAfter": {
+                "Filter_array_-_Scope_Try": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a254dbc5-af01-4a6c-aed1-ef9d54808be7"
+              },
+              "type": "Compose",
+              "inputs": "@   first(body('Filter_array_-_Scope_Try'))?['outputs']?['body']?['error']?['message']"
+            },
+            "Add_a_new_row_-_Log_Failure": {
+              "runAfter": {
+                "Compose_-_Get_Error_Message": [
+                  "Succeeded"
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "a3b76441-29b0-487a-bb12-9eaab928af9c"
+              },
+              "type": "OpenApiConnection",
+              "inputs": {
+                "parameters": {
+                  "entityName": "crb7a_tbl_processinglogs",
+                  "item/crb7a_errormessage": "@outputs('Compose_-_Get_Error_Message')",
+                  "item/crb7a_logname": "Subscription Create - Failed",
+                  "item/crb7a_processeddate": "@utcNow()",
+                  "item/crb7a_runid": "@workflow()?['run']?['name']",
+                  "item/crb7a_stagename": "SubscriptionCreate",
+                  "item/crb7a_status": 884000002
+                },
+                "host": {
+                  "connectionName": "shared_commondataserviceforapps",
+                  "operationId": "CreateRecord",
+                  "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                }
+              }
+            }
+          },
+          "runAfter": {
+            "Scope_-_Try": [
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "41348f2a-d3f1-44a0-903d-0919a5a3bf93"
+          },
+          "type": "Scope"
+        },
+        "Scope_-_Finally": {
+          "actions": {
+            "Condition": {
+              "actions": {
+                "Add_a_new_row_-_Log_Sucess": {
+                  "runAfter": {},
+                  "metadata": {
+                    "operationMetadataId": "89fe86dd-c861-413f-879c-b5986d27a7e0"
+                  },
+                  "type": "OpenApiConnection",
+                  "inputs": {
+                    "parameters": {
+                      "entityName": "crb7a_tbl_processinglogs",
+                      "item/crb7a_logname": "Subscription Create - Completed",
+                      "item/crb7a_processeddate": "@utcNow()",
+                      "item/crb7a_runid": "@workflow()?['run']?['name']",
+                      "item/crb7a_stagename": "SubscriptionCreate",
+                      "item/crb7a_status": 884000001
+                    },
+                    "host": {
+                      "connectionName": "shared_commondataserviceforapps",
+                      "operationId": "CreateRecord",
+                      "apiId": "/providers/Microsoft.PowerApps/apis/shared_commondataserviceforapps"
+                    }
+                  }
+                }
+              },
+              "runAfter": {},
+              "expression": {
+                "and": [
+                  {
+                    "equals": [
+                      "@actions('Scope_-_Catch')?['status']",
+                      "Skipped"
+                    ]
+                  }
+                ]
+              },
+              "metadata": {
+                "operationMetadataId": "6397af1a-07bb-485e-8eab-198de6e72458"
+              },
+              "type": "If"
+            }
+          },
+          "runAfter": {
+            "Scope_-_Catch": [
+              "Succeeded",
+              "TimedOut",
+              "Skipped",
+              "Failed"
+            ]
+          },
+          "metadata": {
+            "operationMetadataId": "7b065162-0d53-43c9-86f8-f38dcfff69e9"
+          },
+          "type": "Scope"
+        }
+      }
+    },
+    "templateName": ""
+  },
+  "schemaVersion": "1.0.0.0"
+}
